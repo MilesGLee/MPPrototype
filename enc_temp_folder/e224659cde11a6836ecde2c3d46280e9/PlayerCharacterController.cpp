@@ -58,10 +58,6 @@ void APlayerCharacterController::ApplyMovement(float horizontal, float vertical,
 
 void APlayerCharacterController::ApplyLookRotation(float horizontal, float vertical, float speed)
 {
-	FRotator rotation(0.0f, 0.0f, 0.0f);
 
-	rotation.Add(vertical, horizontal, 0.0f);
-
-	CameraArm->AddRelativeRotation(rotation);
 }
 
