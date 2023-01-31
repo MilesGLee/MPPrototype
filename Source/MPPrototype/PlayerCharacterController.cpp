@@ -12,15 +12,18 @@ APlayerCharacterController::APlayerCharacterController()
 	PrimaryActorTick.bCanEverTick = true;
 
 	// Create Camera Arm
-	CameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Arm"));
-	CameraArm->SetupAttachment(RootComponent);
-	CameraArm->TargetArmLength = 300.0f;
-	CameraArm->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
-	CameraArm->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
+	_cameraArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("Camera Arm"));
+	_cameraArm->SetupAttachment(RootComponent);
+	_cameraArm->TargetArmLength = 300.0f;
+	_cameraArm->SetRelativeLocation(FVector(0.0f, 0.0f, 100.0f));
+	_cameraArm->SetRelativeRotation(FRotator(0.0f, 0.0f, 0.0f));
 
 	// Create Camera
-	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
-	Camera->SetupAttachment(CameraArm);
+	_camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Player Camera"));
+	_camera->SetupAttachment(_cameraArm);
+
+	// Get Mesh
+	_playerMesh = GetMesh();
 }
 
 // Called when the game starts or when spawned
@@ -35,6 +38,10 @@ void APlayerCharacterController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (_rotationType == RotationType::DYNAMIC)
+	{
+		RotateMeshComponent();
+	}
 }
 
 // Called to bind functionality to input
@@ -45,8 +52,8 @@ void APlayerCharacterController::SetupPlayerInputComponent(UInputComponent* Play
 
 void APlayerCharacterController::ApplyMovement(float horizontal, float vertical, float speed)
 {
-	FVector forward = Camera->GetForwardVector();
-	FVector right = Camera->GetRightVector();
+	FVector forward = _camera->GetForwardVector();
+	FVector right = _camera->GetRightVector();
 	FVector direction;
 
 	direction = forward * vertical;
@@ -54,6 +61,14 @@ void APlayerCharacterController::ApplyMovement(float horizontal, float vertical,
 
 	direction.Normalize();
 	AddMovementInput(direction, speed);
+
+	if (_rotationType == RotationType::DYNAMICMOVEMENT) 
+	{
+		if (!direction.IsZero()) 
+		{
+			RotateMeshComponent();
+		}
+	}
 }
 
 void APlayerCharacterController::ApplyLookRotation(float horizontal, float vertical, float speed)
@@ -62,6 +77,19 @@ void APlayerCharacterController::ApplyLookRotation(float horizontal, float verti
 
 	rotation.Add(vertical, horizontal, 0.0f);
 
-	CameraArm->AddRelativeRotation(rotation);
+	_cameraArm->AddRelativeRotation(rotation);
+}
+
+void APlayerCharacterController::RotateMeshComponent()
+{
+	FRotator rotation(0.0f, 0.0f, 0.0f);
+
+	FRotator desiredRotation(0.0f, -90.0f + _cameraArm->GetRelativeRotation().Yaw, 0.0f);
+
+	FQuat desiredQuat = desiredRotation.Quaternion();
+
+	rotation = FQuat::Slerp(_playerMesh->GetRelativeRotation().Quaternion(), desiredQuat, 0.05f).Rotator();
+
+	_playerMesh->SetRelativeRotation(rotation);
 }
 
