@@ -14,6 +14,14 @@ enum RotationType
 	DYNAMICMOVEMENT UMETA(DisplayName = "Dynamic Movement Rotation"),
 };
 
+UENUM()
+enum ActingType
+{
+	NOTACTING UMETA(DisplayName = "Not Acting"),
+	ACTINGDYNAMIC UMETA(DisplayName = "Dynamic Acting"),
+	ACTINGROOTED UMETA(DisplayName = "Rooted Acting"),
+};
+
 UCLASS()
 class MPPROTOTYPE_API APlayerCharacterController : public ACharacter
 {
@@ -44,7 +52,17 @@ public:
 
 	// Rotate mesh
 	UFUNCTION(BlueprintCallable)
-	void RotateMeshComponent();
+	void RotateMeshComponent(float speed);
+
+	// Dash character
+	UFUNCTION(BlueprintCallable)
+	void StartDash(float horizontal, float vertical, float distance);
+
+	void Dash();
+
+	void EndDash();
+
+	void ResetDash();
 
 private:
 	// Camera
@@ -55,15 +73,35 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "True"))
 	class USpringArmComponent* _cameraArm;
 
-	// Arm Socket
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "True"))
-	AActor* _armSocket;
-
 	// Rotation type enumerator
 	UPROPERTY(EditAnywhere, Category = Movement)
 	TEnumAsByte<RotationType> _rotationType;
 
+	// How fast the mesh rotates
+	UPROPERTY(EditAnywhere, Category = Movement)
+	float _rotateSpeed = 0.05f;
+
 	// The player model
 	UPROPERTY(EditAnywhere, Category = Movement)
 	UMeshComponent* _playerMesh;
+
+	// The dash timer handle
+	FTimerHandle _dashTimerHandle;
+
+	// The dash destination
+	FVector _dashDestination;
+
+	// The dash speed
+	UPROPERTY(EditAnywhere, Category = MovementDash)
+	float _dashSpeed;
+
+	// The dash cooldown
+	UPROPERTY(EditAnywhere, Category = MovementDash)
+	float _dashCooldown;
+
+	// The dash toggle
+	bool _dashAvailable, _isDashing;
+
+	// player acting bool
+	TEnumAsByte<ActingType> _currentAct;
 };
