@@ -1,13 +1,16 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{4511938D-4A08-5050-0D2A-CE9E10B0754B}",
+	"EngineAssociation": "{088D6A62-431F-8D3F-0329-DB90EFEFCE69}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "MPPrototype",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	]
 }
