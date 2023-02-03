@@ -139,12 +139,10 @@ void APlayerCharacterController::StartDash(float horizontal, float vertical, flo
 	if (hit.Location != FVector::ZeroVector) 
 	{
 		_dashDestination = hit.Location;
-		DrawDebugLine(GetWorld(), startPosition, hit.Location, FColor(255, 0, 0), true, -1.0f, 0, 5.33f);
 	}
 	else 
 	{
 		_dashDestination = endPosition;
-		DrawDebugLine(GetWorld(), startPosition, endPosition, FColor(255, 0, 0), true, -1.0f, 0, 5.33f);
 	}
 
 	GetMovementComponent()->Velocity = FVector(0.0f, 0.0f, 0.0f);
@@ -162,8 +160,6 @@ void APlayerCharacterController::Dash()
 {
 	if (FVector::Dist(_dashDestination, GetActorLocation()) <= 50.0f)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("If statement passed!"));
-
 		GetWorldTimerManager().ClearTimer(_dashTimerHandle);
 		_isDashing = false;
 		EndDash();

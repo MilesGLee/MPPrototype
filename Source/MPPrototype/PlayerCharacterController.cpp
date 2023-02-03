@@ -147,13 +147,18 @@ void APlayerCharacterController::StartDash(float horizontal, float vertical, flo
 
 	GetMovementComponent()->Velocity = FVector(0.0f, 0.0f, 0.0f);
 
-	//FRotator desiredRotation(0.0f, -90.0f + direction.Y, 0.0f);
-	//_playerMesh->SetRelativeRotation(desiredRotation);
+
+	FVector desiredDirection = endPosition - startPosition;
+	FRotator desiredRotation = desiredDirection.Rotation();
+	desiredRotation.Yaw += -90.0f;
+
+	FRotator rotation = FQuat::Slerp(_playerMesh->GetRelativeRotation().Quaternion(), desiredRotation.Quaternion(), 1.0f).Rotator();
+
+	_playerMesh->SetRelativeRotation(rotation);
 
 	_dashAvailable = false;
 	_currentAct = ActingType::ACTINGDYNAMIC;
 	_isDashing = true;
-	//GetWorldTimerManager().SetTimer(_dashTimerHandle, this, &APlayerCharacterController::Dash, 0.01f, 1.0f);
 }
 
 void APlayerCharacterController::Dash()
