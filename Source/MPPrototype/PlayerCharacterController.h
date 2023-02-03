@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "PlayerCharacterController.generated.h"
 
+// The enum class for the different types of rotations the mesh will have while in play
 UENUM()
 enum RotationType 
 {
@@ -14,6 +15,7 @@ enum RotationType
 	DYNAMICMOVEMENT UMETA(DisplayName = "Dynamic Movement Rotation"),
 };
 
+// The states of the player character to decide when the mesh can move and or rotate
 UENUM()
 enum ActingType
 {
@@ -42,38 +44,41 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	// Move
+	// Calculate direction and move the player in the inputted direction
 	UFUNCTION(BlueprintCallable)
 	void ApplyMovement(float horizontal, float vertical, float speed);
 
-	// Look turn
+	// Rotate the camera component based on the mouse input
 	UFUNCTION(BlueprintCallable)
 	void ApplyLookRotation(float horizontal, float vertical, float speed);
 
-	// Rotate mesh
+	// Rotate the mesh based on the direction its moving in and the rotation type
 	UFUNCTION(BlueprintCallable)
 	void RotateMeshComponent(float speed);
 
-	// Dash character
+	// Swiftly moves the character over a distance in a straight line based on inputted direction
 	UFUNCTION(BlueprintCallable)
 	void StartDash(float horizontal, float vertical, float distance);
 
+	// Dashes once the direction and distance have been calculated in the start dash function
 	void Dash();
 
+	// Ends the dash and changes the state of the player
 	void EndDash();
 
+	// Allows the player to dash again once the cooldown has finished
 	void ResetDash();
 
 private:
-	// Camera
+	// The camera component of the player
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "True"))
 	class UCameraComponent* _camera;
 
-	// Spring Arm
+	// The spring arm component of the player, used to move the camera
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "True"))
 	class USpringArmComponent* _cameraArm;
 
-	// Rotation type enumerator
+	// Which way the player mesh rotates
 	UPROPERTY(EditAnywhere, Category = Movement)
 	TEnumAsByte<RotationType> _rotationType;
 
@@ -85,10 +90,10 @@ private:
 	UPROPERTY(EditAnywhere, Category = Movement)
 	UMeshComponent* _playerMesh;
 
-	// The dash timer handle
-	FTimerHandle _dashTimerHandle;
+	// The timer handle that handles the dashes cooldown
+	FTimerHandle _dashCooldownHandle;
 
-	// The dash destination
+	// The end point where the player will dash to
 	FVector _dashDestination;
 
 	// The dash speed
@@ -99,9 +104,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = MovementDash)
 	float _dashCooldown;
 
-	// The dash toggle
+	// Booleans to handle when the player can dash and if the player is dashing
 	bool _dashAvailable, _isDashing;
 
-	// player acting bool
+	// The current state of the player
 	TEnumAsByte<ActingType> _currentAct;
 };
