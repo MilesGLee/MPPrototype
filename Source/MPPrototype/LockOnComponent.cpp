@@ -3,6 +3,7 @@
 
 #include "LockOnComponent.h"
 #include "DrawDebugHelpers.h"
+#include "EnemyActor.h"
 #include "Engine/World.h"
 #include "Camera/CameraComponent.h"
 
@@ -53,7 +54,7 @@ void ULockOnComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	FHitResult HitResult;
 
 	GetWorld()->LineTraceSingleByChannel(HitResult, cameraLocation, EndPoint, ECollisionChannel::ECC_Visibility);
-	if (HitResult.bBlockingHit)
+	if ((AEnemyActor*)HitResult.Actor.Get())
 	{
 		// If the raycast hit an actor, store a reference to the actor in LockedOnTarget
 		LockedOnTarget = HitResult.GetActor();
