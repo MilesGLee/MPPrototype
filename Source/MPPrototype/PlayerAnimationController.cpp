@@ -2,6 +2,7 @@
 
 
 #include "PlayerAnimationController.h"
+#include "PlayerCharacterController.h"
 #include <Components/SkeletalMeshComponent.h>
 
 // Sets default values for this component's properties
@@ -21,11 +22,8 @@ void UPlayerAnimationController::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	
-	if (_characterIdleAnimation) 
-	{
-		_characterSkeletalMesh->PlayAnimation(_characterIdleAnimation, true);
-	}
+
+	_characterSkeletalMesh = GetOwner()->FindComponentByClass<USkeletalMeshComponent>();
 }
 
 
@@ -35,5 +33,32 @@ void UPlayerAnimationController::TickComponent(float DeltaTime, ELevelTick TickT
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// ...
+
+	if (_currentAnimationState == AnimationState::IDLE) 
+	{
+		if (_characterIdleAnimation)
+		{
+			_characterSkeletalMesh->PlayAnimation(_characterIdleAnimation, true);
+		}
+	}
+	else if (_currentAnimationState == AnimationState::MOVING)
+	{
+		if (_characterRunAnimation)
+		{
+			_characterSkeletalMesh->PlayAnimation(_characterRunAnimation, true);
+		}
+	}
+	else if (_currentAnimationState == AnimationState::ATTACKING)
+	{
+		if (_characterAttackAnimation)
+		{
+			_characterSkeletalMesh->PlayAnimation(_characterAttackAnimation, true);
+		}
+	}
+}
+
+void UPlayerAnimationController::SetState(TEnumAsByte<AnimationState> state)
+{
+	_currentAnimationState = state;
 }
 
