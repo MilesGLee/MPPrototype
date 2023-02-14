@@ -30,9 +30,6 @@ public:
 	UFUNCTION(CallInEditor)
 	void MovePlayerBackUp();
 
-public:
-	UPROPERTY(EditAnywhere)
-	float Depth;
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -44,4 +41,6 @@ private:
 	class APlayerController* m_controller;
 
 	INT32 m_sinks;
+
+	class UPrimitiveComponent* m_physics;
 };

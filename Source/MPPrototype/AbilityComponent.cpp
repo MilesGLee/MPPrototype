@@ -3,6 +3,7 @@
 
 #include "AbilityComponent.h"
 #include "PlayerCharacterController.h"
+#include <PhysicsEngine/RigidBodyBase.h>
 #include <Engine/World.h>
 
 
@@ -20,9 +21,8 @@ UAbilityComponent::UAbilityComponent()
 void UAbilityComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	m_controller
 	// ...
-	
+	m_physics = Cast<UPrimitiveComponent>(this);
 }
 
 
@@ -35,25 +35,30 @@ void UAbilityComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 void UAbilityComponent::MovePlayerBelowMap()
 {
-	FVector CurrentLocation = GetOwner()->GetVelocity();
+	FVector CurrentLocation = GetOwner()->GetActorLocation();
 
 	if (m_willSink && m_sinks < 1)
 	{
 
 		CurrentLocation -= m_sinkSpot;
 		GetOwner()->SetActorRelativeLocation(CurrentLocation);
+		GetOwner()->DisableComponentsSimulatePhysics();
+		Cast<ACharacter>(GetOwner())->GetMovementBase()->SetEnableGravity(false);
 		m_sinks++;
 	}
 }
 
 void UAbilityComponent::MovePlayerBackUp()
 {
-	FVector CurrentLocation = GetOwner()->GetVelocity();
+	FVector CurrentLocation = GetOwner()->GetActorLocation();
 
 	if (!m_willSink && m_sinks > 0 )
 	{
+		m_physics->SetSimulatePhysics(true);
+
 		CurrentLocation += m_sinkSpot;
 		GetOwner()->SetActorRelativeLocation(CurrentLocation);
+		Cast<ACharacter>(GetOwner())->GetMovementBase()->SetEnableGravity(true);
 		m_sinks--;
 	}
 }
