@@ -26,6 +26,9 @@ APlayerCharacterController::APlayerCharacterController()
 
 	// Get Mesh
 	_playerMesh = GetMesh();
+
+	//Set default orientation
+	_currentOrientation = FVector(0, 1, 0);
 }
 
 // Called when the game starts or when spawned

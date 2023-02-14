@@ -10,18 +10,18 @@
 UENUM()
 enum RotationType 
 {
-	STATIC UMETA(DisplayName = "Static Rotation"),
-	DYNAMIC UMETA(DisplayName = "Dynamic Rotation"),
-	DYNAMICMOVEMENT UMETA(DisplayName = "Dynamic Movement Rotation"),
+	STATIC UMETA(DisplayName = "No Rotation"),
+	DYNAMIC UMETA(DisplayName = "Constant Rotation"),
+	DYNAMICMOVEMENT UMETA(DisplayName = "Movement Rotation"),
 };
 
 // The states of the player character to decide when the mesh can move and or rotate
 UENUM()
 enum ActingType
 {
-	NOTACTING UMETA(DisplayName = "Not Acting"),
-	ACTINGDYNAMIC UMETA(DisplayName = "Dynamic Acting"),
-	ACTINGROOTED UMETA(DisplayName = "Rooted Acting"),
+	NOTACTING UMETA(DisplayName = "Free Movement"),
+	ACTINGDYNAMIC UMETA(DisplayName = "Locked Rotation"),
+	ACTINGROOTED UMETA(DisplayName = "Locked Movement"),
 };
 
 UCLASS()
@@ -109,4 +109,7 @@ private:
 
 	// The current state of the player
 	TEnumAsByte<ActingType> _currentAct;
+
+	UPROPERTY(EditAnywhere, Category = Movement)
+	FVector _currentOrientation;
 };
